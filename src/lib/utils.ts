@@ -1,5 +1,6 @@
 import { gameState, currentPlayer, gameStatus } from '@/stores/store';
 import { get } from 'svelte/store';
+import { supabase } from './supabase/supabaseClient';
 
 export function checkWin(state) {
 	const player = get(currentPlayer);
@@ -7,6 +8,7 @@ export function checkWin(state) {
 	// Check rows
 	for (let row = 0; row < 4; row++) {
 		if (state[row].every((cell) => cell === player)) {
+			storeGameResult(player);
 			gameStatus.set(`${player} wins!`);
 			return true;
 		}
@@ -15,6 +17,7 @@ export function checkWin(state) {
 	// Check columns
 	for (let col = 0; col < 4; col++) {
 		if (state.every((row) => row[col] === player)) {
+			storeGameResult(player);
 			gameStatus.set(`${player} wins!`);
 			return true;
 		}
@@ -31,12 +34,14 @@ export function checkWin(state) {
 			state[2][1] === player &&
 			state[3][0] === player)
 	) {
+		storeGameResult(player);
 		gameStatus.set(`${player} wins!`);
 		return true;
 	}
 
 	// Check for draw
 	if (!state.flat().includes('')) {
+		storeGameResult('Draw');
 		gameStatus.set('Draw!');
 		return true;
 	}
@@ -44,6 +49,21 @@ export function checkWin(state) {
 	return false;
 }
 
+async function storeGameResult(winner) {
+	try {
+		const { data, error } = await supabase
+			.from('game_results') 
+			.insert({
+				winner: winner
+			});
+
+		if (error) {
+			console.error('Error storing game result:', error);
+		}
+	} catch (error) {
+		console.error('Error storing game result:', error);
+	}
+}
 export function makeMove(row, col) {
 	gameState.update((state) => {
 		if (!state[row][col] && get(gameStatus) === 'PLAYING') {

@@ -4,6 +4,7 @@
 	import { currentPlayer } from '@/stores/store';
 	import Icon from '@iconify/svelte';
 	import Board from '@/components/Board.svelte';
+	import Leaderboard from '@/components/Leaderboard.svelte';
 
 	let showSplashScreen = true;
 
@@ -61,8 +62,9 @@
 			<Icon icon="hugeicons:tic-tac-toe" class="h-10 w-10" />
 		</h1>
 
-		<div>
+		<div class="flex items-center justify-center gap-10">
 			<Board />
+			<Leaderboard />
 		</div>
 	</main>
 {/if}

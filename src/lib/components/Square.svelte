@@ -9,13 +9,6 @@
 
 	$: value = $gameState[row][col];
 
-	// Trigger win check whenever the value is updated
-	$: {
-		if (value) {
-			checkWin($gameState);
-		}
-	}
-
 	const handleClick = () => {
 		if (!value) makeMove(row, col);
 	};
